@@ -1,0 +1,4 @@
+fire==0.5.0
+loguru==0.7.2
+pulsar-client==3.3.0    
+requests==2.31.0

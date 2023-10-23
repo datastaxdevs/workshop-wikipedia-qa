@@ -1,0 +1,3 @@
+# data and cache directories
+.cache/*
+data/*

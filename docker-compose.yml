@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  docstream:
+    build: 
+      context: docstream
+      dockerfile: Dockerfile
+    env_file:
+      - ./docstream/.env
+    command: sh -c "python app.py" 
