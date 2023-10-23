@@ -47,10 +47,9 @@ def stream_wikipedia_docs() -> None:
     try:
         while True:
             articles = list_wikipedia_articles()
-            logger.info(f"Got {len(articles)} articles")
             for article in articles:
-                logger.info(f"Sending article: {article['title']}")
                 producer.send(str(article).encode("utf-8"))    
+            logger.info(f"Added {len(articles)} articles to stream.")
     except:
         client.close()
 
