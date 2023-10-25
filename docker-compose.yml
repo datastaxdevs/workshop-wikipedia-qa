@@ -5,5 +5,28 @@ services:
       context: docstream
       dockerfile: Dockerfile
     env_file:
-      - ./docstream/.env
+      - .env
     command: sh -c "python app.py" 
+  embeddings:
+    build:
+      context: embeddings
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - .:/embeddings/
+      - ./.cache/torch/:/.cache/torch/
+      - ./.cache/huggingface/:/.cache/huggingface/
+    ports:
+      - "8000:8000"
+    restart: always
+    # uncomment to deploy on GPU
+    #deploy:
+    #  resources:
+    #    reservations:
+    #      devices:
+    #        - driver: nvidia
+    #          count: 1
+    #          capabilities: [gpu]
+    command: sh -c "
+      gunicorn --workers 1 -k uvicorn.workers.UvicornWorker app:app --bind 0.0.0.0:8000"
