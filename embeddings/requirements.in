@@ -1,0 +1,12 @@
+fastapi                 # web framework
+gunicorn                # WSGI server
+loguru                  # better logging
+uvicorn[standard]       # ASGI server
+
+
+InstructorEmbedding     # instructor embedding model
+sentence_transformers   # improperly managed dependency for instructor embedding models
+
+# integration testing modules
+langchain
+requests
