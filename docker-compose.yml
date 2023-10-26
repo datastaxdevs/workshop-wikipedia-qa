@@ -30,3 +30,13 @@ services:
     #          capabilities: [gpu]
     command: sh -c "
       gunicorn --workers 1 -k uvicorn.workers.UvicornWorker app:app --bind 0.0.0.0:8000"
+  procstream:
+    build:
+      context: procstream
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    # embedding service needs to load first
+    # note first time embedding service runs it will take a while to download the model
+    # and this may fail, run it again and it should work
+    command: sh -c "sleep 10; python app.py"

@@ -1,5 +1,6 @@
 import fire
 from loguru import logger
+import orjson
 import os
 import pulsar
 import requests
@@ -48,9 +49,10 @@ def stream_wikipedia_docs() -> None:
         while True:
             articles = list_wikipedia_articles()
             for article in articles:
-                producer.send(str(article).encode("utf-8"))    
+                producer.send(orjson.dumps(article))    
             logger.info(f"Added {len(articles)} articles to stream.")
-    except:
+    except Exception as e:
+        logger.warning(f"{e}")
         client.close()
 
 if __name__ == "__main__":
