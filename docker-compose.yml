@@ -40,3 +40,14 @@ services:
     # note first time embedding service runs it will take a while to download the model
     # and this may fail, run it again and it should work
     command: sh -c "sleep 10; python app.py"
+  chatbot:
+    build:
+      context: chatbot
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./models/:/models/
+    ports:
+      - "7860:7860"
+    command: sh -c "python app.py"
