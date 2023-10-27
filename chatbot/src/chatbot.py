@@ -40,37 +40,39 @@ class StreamingGradioCallbackHandler(BaseCallbackHandler):
         """Run when LLM errors."""
         self.q.put(job_done)
 
-# initialize once
-model = "/models/mistral-7b-instruct-v0.1.Q4_K_M.gguf"
-template = """{question}"""
-prompt = PromptTemplate(template=template, input_variables=["question"])
+class Chatbot:
 
-callback_manager = CallbackManager([StreamingGradioCallbackHandler(q)])
+    def __init__(self):
+        self.model = model = "/models/mistral-7b-instruct-v0.1.Q4_K_M.gguf"
+        template = """{question}"""
+        self.prompt = PromptTemplate(template=template, input_variables=["question"])
 
-llm = LlamaCpp(
-    model_path=model,
-    temperature=0.75,
-    max_tokens=2000,
-    top_p=1,
-    streaming=True,
-    callback_manager=callback_manager, 
-    verbose=True, 
-)
+        callback_manager = CallbackManager([StreamingGradioCallbackHandler(q)])
+
+        llm = LlamaCpp(
+            model_path=model,
+            temperature=0.75,
+            max_tokens=2000,
+            top_p=1,
+            streaming=True,
+            callback_manager=callback_manager, 
+            verbose=True, 
+        )
   
-chain = LLMChain(
-    llm=llm,
-    prompt=prompt,
-)
+        self.chain = LLMChain(
+            llm=llm,
+            prompt=self.prompt,
+        )
 
-def respond(history):
-    question = history[-1][0]
-    thread = Thread(target=chain.run, kwargs={"question": question})
-    thread.start()
-    history[-1][1] = ""
-    while True:
-        next_token = q.get(block=True)
-        if next_token is job_done:
-            break
-        history[-1][1] += next_token
-        yield history
-    thread.join()
+    def respond(self, history):
+        question = history[-1][0]
+        thread = Thread(target=self.chain.run, kwargs={"question": question})
+        thread.start()
+        history[-1][1] = ""
+        while True:
+            next_token = q.get(block=True)
+            if next_token is job_done:
+                break
+            history[-1][1] += next_token
+            yield history
+        thread.join()
