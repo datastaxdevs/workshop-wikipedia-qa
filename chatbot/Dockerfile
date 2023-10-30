@@ -9,4 +9,7 @@ RUN pip install pip-tools==7.1.0
 ADD requirements.txt .
 RUN pip-sync requirements.txt 
 
+# maybe makes it faster
+RUN CMAKE_ARGS="-DLLAMA_CUBLAS=on" FORCE_CMAKE=1 pip install --upgrade --force-reinstall llama-cpp-python --no-cache-dir
+
 ADD . .
