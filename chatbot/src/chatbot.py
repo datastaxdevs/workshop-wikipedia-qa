@@ -50,13 +50,9 @@ class Chatbot:
     def __init__(self):
         self.model = model = "/models/mistral-7b-instruct-v0.1.Q4_K_M.gguf"
         
-        template = """You are a helpful question answering bot.
-        Use the following pieces of retrieved context to answer the question.
-        If the retrieved context does not answer the question say "I don't know". 
-        You provide correct answers to questions. 
-        
-        Context: {context}
-        Question: {question}
+        # TODO: improve the prompt
+        template = """{question}
+        {context}
         """
 
         prompt = PromptTemplate(
@@ -81,11 +77,15 @@ class Chatbot:
         )
 
         db = Astra()
-        self.retriever = db.get_vectorstore().as_retriever(k=3)
 
         # option 1: simple RAG
+        vectorstore = db.get_vectorstore()
+        
+        # TODO: retrieve documents with vector search from the vectorstore
+        self.retriever = None
+
         self.rag_chain = {
-            "context": db.get_vectorstore().as_retriever(k=3),
+            "context": {}, # replace with retriever
             "question": RunnablePassthrough()
         } | prompt | self.llm
         
