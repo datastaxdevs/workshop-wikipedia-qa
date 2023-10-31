@@ -15,6 +15,9 @@ if EMBEDDING_MODEL.startswith("hkunlp/instructor"):
 else:
     raise ValueError(f"Unknown embedding model {EMBEDDING_MODEL}")
 
+# match openai spec (for langchain compatibility):
+# https://platform.openai.com/docs/api-reference/embeddings/create
+# (encoding_format is optional/not required)
 class EmbeddingRequest(BaseModel):
     input: list[str]
     model: str
