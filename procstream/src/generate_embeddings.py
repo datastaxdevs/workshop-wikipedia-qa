@@ -1,9 +1,7 @@
 from loguru import logger
 import os
 
-import cassio
 from langchain.embeddings import LocalAIEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Cassandra
 
 from newspaper import Article
@@ -23,11 +21,9 @@ class GenerateEmbeddings:
             table_name=self.ASTRA_TABLE,
         )
 
-        # can replace with a more sophisticated text splitter
-        self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=500,
-            chunk_overlap=80,
-        )
+        # TODO: choose a text splitting method
+        # https://api.python.langchain.com/en/latest/api_reference.html#module-langchain.text_splitter
+        self.text_splitter = None 
 
         logger.info(f"Initialized langchain embedding service with Astra DB")
         logger.info(f"ASTRA_TABLE={self.ASTRA_TABLE}")
@@ -37,10 +33,11 @@ class GenerateEmbeddings:
         ASTRA_TOKEN = os.environ.get("ASTRA_TOKEN")
         ASTRA_DATABASE_ID = os.environ.get("ASTRA_DATABASE_ID")
 
-        cassio.init(token=ASTRA_TOKEN, database_id=ASTRA_DATABASE_ID)
-        logger.info(f"Connected to Astra DB: {ASTRA_DATABASE_ID}")
-        return cassio.config.resolve_session()
-
+        # TODO: connect to Astra DB with CassIO
+        
+        # TODO: return the database session
+        return None
+    
     def _init_embedding_model(self):
         EMBEDDING_MODEL_API_KEY = os.environ.get("EMBEDDING_MODEL_API_KEY")
         EMBEDDING_MODEL_API_BASE = os.environ.get("EMBEDDING_MODEL_API_BASE")
@@ -72,6 +69,8 @@ class GenerateEmbeddings:
         # add the title and url for the article to each chunk as metadata
         metadata = {"title": title, "url": url}
         metadatas = [metadata for _ in range(len(chunks))]
+
+        # TODO: add chunks and their metadata to the vectorstore
 
         self.vectorstore.add_texts(texts=chunks, metadatas=metadatas)
         logger.info(f"Stored {len(chunks)} vectors for article: {title}.")
