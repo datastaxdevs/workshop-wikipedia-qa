@@ -1,0 +1,6 @@
+cassio==0.1.3
+gradio==3.50.2
+langchain==0.0.324
+llama-cpp-python==0.2.11
+loguru==0.7.2
+openai==0.28.1 # required even though we aren't using openAI
