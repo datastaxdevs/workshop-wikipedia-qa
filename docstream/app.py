@@ -40,15 +40,16 @@ def stream_wikipedia_docs() -> None:
     pulsar_topic = os.environ.get("PULSAR_FULL_TOPIC")
 
     # TODO: connect to pulsar
+    client = pulsar.Client(service_url,
+                           authentication=pulsar.AuthenticationToken(token))
+
+    producer = client.create_producer(pulsar_topic)
 
     try:
         while True:
             articles = list_wikipedia_articles()
             for article in articles:
-                data_to_send = orjson.dumps(article)
-
-                # TODO: send data to pulsar
-
+                producer.send(orjson.dumps(article))    
             logger.info(f"Added {len(articles)} articles to stream.")
     except Exception as e:
         logger.warning(f"{e}")
